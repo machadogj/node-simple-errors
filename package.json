@@ -1,5 +1,5 @@
 {
-  "name": "node-simple-errors",
+  "name": "simple-errors",
   "version": "0.0.1",
   "description": "Errors constructor for simple error handling.",
   "main": "index.js",
