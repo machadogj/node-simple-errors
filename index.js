@@ -62,7 +62,7 @@ Error.toJson = function ( err ) {
 
     for (var prop in err) {
         var value = err[prop];
-        info[prop] = (value instanceof Error) ? extract(value) : value;
+        info[prop] = (value instanceof Error) ? Error.toJson(value) : value;
     }
     
     info.stack = err.stack.split("\n");

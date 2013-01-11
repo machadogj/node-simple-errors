@@ -92,5 +92,12 @@ describe("simple-errors", function() {
 
 			assert.ok(Object.keys(obj).indexOf('stack') >= 0);
 		});
+
+		it("should recursively turn errors into literals", function () {
+			var err = Error.create('foo', {}, Error.create('bar'));
+			var obj = Error.toJson(err);
+
+			assert.equal('bar', obj.inner.message);
+		});
 	});
 });
