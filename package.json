@@ -1,0 +1,21 @@
+{
+  "name": "node-simple-errors",
+  "version": "0.0.1",
+  "description": "Errors constructor for simple error handling.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/machadogj/node-simple-errors.git"
+  },
+  "devDependencies":{
+    "mocha":"*"
+  },
+  "keywords": [
+    "error"
+  ],
+  "author": "Gustavo Machado",
+  "license": "BSD"
+}
