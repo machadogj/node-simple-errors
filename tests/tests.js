@@ -106,5 +106,10 @@ describe("simple-errors", function() {
 			assert.equal("something bad happened", Error.toJson(err.inner));
 		});
 
+		it("should return non Error objects", function () {
+
+			var err = Error.toJson({foo: 'bar'});
+			assert.deepEqual({foo: 'bar'}, err);
+		});
 	});
 });
