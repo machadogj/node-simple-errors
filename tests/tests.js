@@ -99,5 +99,12 @@ describe("simple-errors", function() {
 
 			assert.equal('bar', obj.inner.message);
 		});
+
+		it("should support a 'string' in inner", function () {
+			var err = Error.create('foo', {}, "something bad happened");
+
+			assert.equal("something bad happened", Error.toJson(err.inner));
+		});
+
 	});
 });
