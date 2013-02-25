@@ -40,7 +40,7 @@ var err = Error.http(500);
 console.log(err.status === 500); //prints true
 
 //helper for status codes, with message, data and error
-var err = Error.http(500, 'foo', {'foo: 'bar'}, err);
+var err = Error.http(500, 'foo', {foo: 'bar'}, err);
 console.log(err.status === 500); //prints true
 console.log(err.message === 'foo'); //prints true
 console.log(err.foo === 'bar'); //prints true
