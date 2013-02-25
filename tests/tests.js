@@ -65,12 +65,55 @@ describe("simple-errors", function() {
 
 	describe("http", function () {
 
-		it("should use 500 as defualt", function () {
+		it("should use 500 as default", function () {
 
 			var err = Error.http();
 
-			assert.equal('Internal server error', err.message);
+			assert.equal('Internal Server Error', err.message);
 			assert.equal(500, err.status);
+		});
+
+		it("should use 500 as default", function () {
+
+			var err = Error.http('foo');
+
+			assert.equal('foo', err.message);
+			assert.equal(500, err.status);
+		});
+
+		it("should add a default description", function () {
+
+			var err = Error.http(400);
+
+			assert.equal('Bad Request', err.message);
+			assert.equal(400, err.status);
+		});
+
+		it("should add string data to error", function () {
+
+			var err = Error.http(400, "foo", "bar");
+
+			assert.equal('foo', err.message);
+			assert.equal('bar', err.data);
+			assert.equal(400, err.status);
+		});
+
+		it("should add object data to error", function () {
+
+			var err = Error.http(400, "foo", {x: "bar"});
+
+			assert.equal('foo', err.message);
+			assert.equal('bar', err.x);
+			assert.equal(400, err.status);
+		});
+
+		it("should add inner error", function () {
+
+			var err = Error.http(400, "foo", {}, "something wrong");
+
+			assert.equal('foo', err.message);
+			assert.equal('something wrong', err.inner);
+			assert.equal(400, err.status);
 		});
 	});
 
@@ -103,12 +146,12 @@ describe("simple-errors", function() {
 		it("should support a 'string' in inner", function () {
 			var err = Error.create('foo', {}, "something bad happened");
 
-			assert.equal("something bad happened", Error.toJson(err.inner));
+			assert.equal("something bad happened", Error.toJson(err).inner);
 		});
 
 		it("should return non Error objects", function () {
-
 			var err = Error.toJson({foo: 'bar'});
+
 			assert.deepEqual({foo: 'bar'}, err);
 		});
 	});
