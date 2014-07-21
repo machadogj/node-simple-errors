@@ -1,6 +1,6 @@
 {
   "name": "simple-errors",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Errors constructor for simple error handling.",
   "main": "index.js",
   "scripts": {
