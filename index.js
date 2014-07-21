@@ -73,7 +73,7 @@ Error.toJson = function ( err ) {
 	var info = {};
 	if (err instanceof Error) {
 		info.message = err.message;
-		info.stack = err.stack.split("\n");
+		info.stack = err.stack && err.stack.split("\n");
     }
 
     if (typeof(err) === 'object') {
