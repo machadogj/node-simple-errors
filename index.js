@@ -76,7 +76,6 @@ Error.toJson = function ( err ) {
 
 	var info = {};
 	if (err instanceof Error) {
-		console.log('asdfasdfasda');
 		info.message = err.message;
 		if(err.type && err.type === 'stack_overflow'){
 		    err.stack = getStackTrace();
