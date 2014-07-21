@@ -67,13 +67,22 @@ Error.http = function (code, msg, data, inner) {
  * @api public
  */
 Error.toJson = function ( err ) {
-	
+	var getStackTrace = function() {
+	    var obj = {};
+	    Error.captureStackTrace(obj, getStackTrace);
+	    return obj.stack;
+	};
 	if (typeof(err)==='string') return { message: err};
 
 	var info = {};
 	if (err instanceof Error) {
+		console.log('asdfasdfasda');
 		info.message = err.message;
-		info.stack = err.stack && err.stack.split("\n");
+		if(err.type && err.type === 'stack_overflow'){
+		    err.stack = getStackTrace();
+		}
+                info.stack = err.stack && err.stack.split("\n");
+
     }
 
     if (typeof(err) === 'object') {
