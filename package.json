@@ -4,14 +4,15 @@
   "description": "Errors constructor for simple error handling.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec test"
+    "test": "istanbul cover _mocha -- -R spec"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/machadogj/node-simple-errors.git"
   },
   "devDependencies":{
-    "mocha":"*"
+    "mocha": "*",
+    "istanbul": "*"
   },
   "keywords": [
     "error"
