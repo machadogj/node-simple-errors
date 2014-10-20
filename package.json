@@ -4,7 +4,7 @@
   "description": "Errors constructor for simple error handling.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec test"
   },
   "repository": {
     "type": "git",
