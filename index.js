@@ -13,22 +13,30 @@
  * @param inner (any type) for chaining errors
  * @api public
  */
-Error.create = function ( msg, data, inner ) {
+Error.create = function (msg, data, inner) {
     "use strict";
+    var err,
+        innerValue;
     data = data || {};
 
-    var err = new Error(msg || "Unknown error");
+    err = new Error(msg || "Unknown error");
     err.public = true;
 
-    var innerValue = inner || (data instanceof Error ? data : null);
-    if (innerValue) err.inner = innerValue;
+    innerValue = inner || (data instanceof Error ? data : null);
+    if (innerValue) {
+        err.inner = innerValue;
+    }
 
-    if (data instanceof Array || typeof(data) !== 'object') {
+    if (data instanceof Array || typeof data !== 'object') {
         err.data = data;
     } else {
         Object.keys(data).forEach(function (key) {
             err[key] = data[key];
         });
+    }
+
+    if (!err.status && err.inner && err.inner.status) {
+        err.status = err.inner.status;
     }
 
     return err;
