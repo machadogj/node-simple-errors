@@ -13,27 +13,32 @@
  * @param inner (any type) for chaining errors
  * @api public
  */
-Error.create = function ( msg, data, inner ) {
-	
-	data = data || {};
+Error.create = function (msg, data, inner) {
+    "use strict";
+    var err,
+        innerValue;
+    data = data || {};
 
-	var err = new Error(msg || "Unknown error");
+    err = new Error(msg || "Unknown error");
 
-	var innerValue = inner || (data instanceof Error ? data : null);
-	if (innerValue) err.inner = innerValue;
+    innerValue = inner || (data instanceof Error ? data : null);
+    if (innerValue) {
+        err.inner = innerValue;
+    }
 
-	if (data instanceof Array || typeof(data) !== 'object') {
+    if (data instanceof Array || typeof data !== 'object') {
+        err.data = data;
+    } else {
+        Object.keys(data).forEach(function (key) {
+            err[key] = data[key];
+        });
+    }
 
-		err.data = data;
+    if (!err.status) {
+        err.status =  (err.inner && err.inner.status) ? err.inner.status : 500;
+    }
 
-	} else {
-
-		Object.keys(data).forEach(function (key) {
-			err[key] = data[key];
-		});
-	}
-
-	return err;
+    return err;
 };
 
 /**
@@ -44,20 +49,20 @@ Error.create = function ( msg, data, inner ) {
  * @param inner (Error|string) for chaining errors
  */
 Error.http = function (code, msg, data, inner) {
-	
-	if (typeof(code)==='string') {
-		inner = data;
-		data = msg;
-		msg = code;
-		code = 500;
-	}
+    "use strict";
+    if (typeof(code)==='string') {
+        inner = data;
+        data = msg;
+        msg = code;
+        code = 500;
+    }
 
-	code = code || 500;
-	msg = msg || statusCodes["" + code] || 'Unknown error';
-	
-	var err = Error.create(msg, data, inner);
-	err.status = code;
-	return err;
+    code = code || 500;
+    msg = msg || statusCodes["" + code] || 'Unknown error';
+    
+    var err = Error.create(msg, data, inner);
+    err.status = code;
+    return err;
 };
 
 /**
@@ -67,8 +72,8 @@ Error.http = function (code, msg, data, inner) {
  * @api public
  */
 Error.toJson = function ( err ) {
-	
-	if (typeof(err)==='string') return { message: err};
+    "use strict";
+    if (typeof(err)==='string') return { message: err};
 
 	var info = {};
 	if (err instanceof Error) {
@@ -77,53 +82,74 @@ Error.toJson = function ( err ) {
     }
 
     if (typeof(err) === 'object') {
-		for (var prop in err) {
-			var value = err[prop];
-			info[prop] = (value instanceof Error) ? Error.toJson(value) : value;
-		}
-	}
+        for (var prop in err) {
+            var value = err[prop];
+            info[prop] = (value instanceof Error) ? Error.toJson(value) : value;
+        }
+    }
     
     return info;
 };
 
+/**
+ * Get the public error message recursively through every inner errors
+ * A public error is every error instance with a property 'public' set to true
+ * @param err (Error|Object)
+ * @api public
+ */
+Error.publicMessage = function (err) {
+    "use strict";
+    var msg = "",
+        statusCode = err.status;
+
+    if (statusCode && Number(statusCode) < 500) {
+        msg += err.message;
+    }
+
+    if (err.inner) {
+        var innerMessage = Error.publicMessage(err.inner);
+        msg += innerMessage !== "" ? " - " + innerMessage : "";
+    }
+    return msg;
+};
 
 var statusCodes = {
-	"400": "Bad Request",
-	"401": "Unauthorized",
-	"402": "Payment Required",
-	"403": "Forbidden",
-	"404": "Not Found",
-	"405": "Method Not Allowed",
-	"406": "Not Acceptable",
-	"407": "Proxy Authentication Required",
-	"408": "Request Timeout",
-	"409": "Conflict",
-	"410": "Gone",
-	"411": "Length Required",
-	"412": "Precondition Failed",
-	"413": "Request Entity Too Large",
-	"414": "Request-URI Too Long",
-	"415": "Unsupported Media Type",
-	"416": "Requested Range Not Satisfiable",
-	"417": "Expectation Failed",
-	"418": "I'm a teapot",
-	"422": "Unprocessable Entity",
-	"423": "Locked",
-	"424": "Failed Dependency",
-	"425": "Unordered Collection",
-	"426": "Upgrade Required",
-	"428": "Precondition Required",
-	"429": "Too Many Requests",
-	"431": "Request Header Fields Too Large",
-	"500": "Internal Server Error",
-	"501": "Not Implemented",
-	"502": "Bad Gateway",
-	"503": "Service Unavailable",
-	"504": "Gateway Timeout",
-	"505": "HTTP Version Not Supported",
-	"506": "Variant Also Negotiates",
-	"507": "Insufficient Storage",
-	"508": "Loop Detected",
-	"510": "Not Extended",
-	"511": "Network Authentication Required"
+    "400": "Bad Request",
+    "401": "Unauthorized",
+    "402": "Payment Required",
+    "403": "Forbidden",
+    "404": "Not Found",
+    "405": "Method Not Allowed",
+    "406": "Not Acceptable",
+    "407": "Proxy Authentication Required",
+    "408": "Request Timeout",
+    "409": "Conflict",
+    "410": "Gone",
+    "411": "Length Required",
+    "412": "Precondition Failed",
+    "413": "Request Entity Too Large",
+    "414": "Request-URI Too Long",
+    "415": "Unsupported Media Type",
+    "416": "Requested Range Not Satisfiable",
+    "417": "Expectation Failed",
+    "418": "I'm a teapot",
+    "422": "Unprocessable Entity",
+    "423": "Locked",
+    "424": "Failed Dependency",
+    "425": "Unordered Collection",
+    "426": "Upgrade Required",
+    "428": "Precondition Required",
+    "429": "Too Many Requests",
+    "431": "Request Header Fields Too Large",
+    "500": "Internal Server Error",
+    "501": "Not Implemented",
+    "502": "Bad Gateway",
+    "503": "Service Unavailable",
+    "504": "Gateway Timeout",
+    "505": "HTTP Version Not Supported",
+    "506": "Variant Also Negotiates",
+    "507": "Insufficient Storage",
+    "508": "Loop Detected",
+    "510": "Not Extended",
+    "511": "Network Authentication Required"
 };
