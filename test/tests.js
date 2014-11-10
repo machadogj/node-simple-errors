@@ -170,7 +170,7 @@ describe("simple-errors", function () {
         it("should show public message only", function () {
             var publicMessage = "My public Error message",
                 innerError = new Error("Test Inner error"),
-                error = Error.create(publicMessage, innerError);
+                error = Error.http(403, publicMessage, innerError);
 
             assert.ok(error);
             assert.equal(publicMessage, Error.publicMessage(error));
@@ -178,7 +178,7 @@ describe("simple-errors", function () {
 
         it("should show public message only without inner", function () {
             var publicMessage = "My public Error message",
-                error = Error.create(publicMessage);
+                error = Error.http(302, publicMessage);
 
             assert.ok(error);
             assert.equal(publicMessage, Error.publicMessage(error));
@@ -197,8 +197,8 @@ describe("simple-errors", function () {
                 publicMessage2 = "The User can't be created. Please try again with a different name",
                 internalInnerError = new Error("Error in DB query. Table 'test' does not exists"),
                 dbError = new Error(internalInnerError),
-                publicError1 = Error.create(publicMessage1, dbError),
-                publicError2 = Error.create(publicMessage2, null, publicError1);
+                publicError1 = Error.http(400, publicMessage1, dbError),
+                publicError2 = Error.http(400, publicMessage2, null, publicError1);
 
             assert.ok(publicError2);
             assert.equal(publicMessage2 + " - " + publicMessage1, Error.publicMessage(publicError2));
@@ -209,8 +209,8 @@ describe("simple-errors", function () {
                 publicMessage2 = "The User can't be created. Please try again with a different name",
                 internalInnerError = new Error("Error in DB query. Table 'test' does not exists"),
                 dbError = new Error(internalInnerError),
-                publicError1 = Error.create(publicMessage1, {public: false}, dbError),
-                publicError2 = Error.create(publicMessage2, null, publicError1);
+                publicError1 = Error.create(publicMessage1, dbError),
+                publicError2 = Error.http(400, publicMessage2, publicError1);
 
             assert.ok(publicError2);
             assert.equal(publicMessage2, Error.publicMessage(publicError2));

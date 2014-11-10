@@ -20,7 +20,6 @@ Error.create = function (msg, data, inner) {
     data = data || {};
 
     err = new Error(msg || "Unknown error");
-    err.public = true;
 
     innerValue = inner || (data instanceof Error ? data : null);
     if (innerValue) {
@@ -35,8 +34,8 @@ Error.create = function (msg, data, inner) {
         });
     }
 
-    if (!err.status && err.inner && err.inner.status) {
-        err.status = err.inner.status;
+    if (!err.status) {
+        err.status =  (err.inner && err.inner.status) ? err.inner.status : 500;
     }
 
     return err;
@@ -100,10 +99,13 @@ Error.toJson = function ( err ) {
  */
 Error.publicMessage = function (err) {
     "use strict";
-    var msg = "";
-    if (err.public) {
+    var msg = "",
+        statusCode = err.status;
+
+    if (statusCode && Number(statusCode) < 500) {
         msg += err.message;
     }
+
     if (err.inner) {
         var innerMessage = Error.publicMessage(err.inner);
         msg += innerMessage !== "" ? " - " + innerMessage : "";
