@@ -2,6 +2,7 @@
 require('../index.js');
 
 var assert = require('assert');
+var fs = require('fs');
 
 describe("simple-errors", function () {
     "use strict";
@@ -62,6 +63,15 @@ describe("simple-errors", function () {
             var err = Error.create('foo', {}, 'boo');
 
             assert.equal('boo', err.inner);
+        });
+
+        it('should have a valid description message', function () {
+            fs.readFile('thisisnotarealfile.txt', function (err, data) {
+                assert.ok(err);
+                var se = Error.create('foo', err);
+                assert.equal('Error: no such file or directory [thisisnotarealfile.txt]',
+                    se.description);
+            });
         });
     });
 

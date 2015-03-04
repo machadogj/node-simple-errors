@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/machadogj/node-simple-errors.git"
   },
-  "devDependencies":{
+  "devDependencies": {
     "mocha": "*",
     "istanbul": "*"
   },
@@ -18,5 +18,8 @@
     "error"
   ],
   "author": "Gustavo Machado",
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "errno": "^0.1.1"
+  }
 }

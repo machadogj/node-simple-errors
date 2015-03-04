@@ -13,6 +13,9 @@
  * @param inner (any type) for chaining errors
  * @api public
  */
+
+var errno = require('errno');
+
 Error.create = function (msg, data, inner) {
     "use strict";
     var err,
@@ -37,6 +40,8 @@ Error.create = function (msg, data, inner) {
     if (!err.status) {
         err.status =  (err.inner && err.inner.status) ? err.inner.status : 500;
     }
+
+    err.description = innerValue ? errmsg(innerValue) : '';
 
     return err;
 };
@@ -153,3 +158,19 @@ var statusCodes = {
     "510": "Not Extended",
     "511": "Network Authentication Required"
 };
+
+
+
+function errmsg(err) {
+    var str = 'Error: ';
+    if (errno.errno[err.errno]) {
+        str += errno.errno[err.errno].description;
+    } else {
+        str += err.message;
+    }
+
+    if (err.path) {
+        str += ' [' + err.path + ']';
+    }
+    return str;
+}
